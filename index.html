@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f7f5ef">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<title>스카이의 다이어트 플래너</title>
+<style>
+:root{--bg:#f7f5ef;--card:#fffefa;--ink:#292b27;--muted:#77796f;--line:#e8e5dc;--accent:#6d805d;--accent-soft:#e8eee2;--shadow:0 8px 28px rgba(44,48,36,.06)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;line-height:1.6}
+.wrap{width:min(760px,100%);margin:0 auto;padding:24px 16px 48px}
+header{padding:12px 4px 22px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--accent);text-transform:uppercase}
+h1{font-size:clamp(26px,6vw,36px);line-height:1.25;margin:8px 0 10px;letter-spacing:-.04em}
+.subtitle{margin:0;color:var(--muted);font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0 26px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px}
+.stat small{display:block;color:var(--muted);font-size:12px}
+.stat strong{display:block;font-size:16px;margin-top:4px}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:28px 2px 13px}
+h2{font-size:21px;letter-spacing:-.03em;margin:0}
+.section-head p{font-size:12px;color:var(--muted);margin:0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}
+.day-tabs{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;padding:14px;border-bottom:1px solid var(--line)}
+.day-tab{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:999px;padding:9px 0;font-size:14px;cursor:pointer}
+.day-tab[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:#fff;font-weight:700}
+.day-title{font-size:25px;letter-spacing:-.04em;margin:0;padding:18px 20px 8px}
+.meal{padding:16px 20px;display:grid;grid-template-columns:36px 1fr;gap:12px;border-top:1px solid var(--line)}
+.meal-icon{width:36px;height:36px;border-radius:12px;background:var(--accent-soft);display:grid;place-items:center;font-size:17px}
+.meal h3{margin:0 0 5px;font-size:16px}
+.meal p{margin:0;font-size:15px}
+.note{margin:0;padding:14px 20px;background:#f5f3ec;color:var(--muted);font-size:12px}
+.progress-wrap{display:flex;align-items:center;gap:10px;min-width:120px}
+.progress{height:6px;border-radius:99px;background:var(--line);overflow:hidden;flex:1}
+.progress span{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+#progressText{font-size:12px;color:var(--muted);white-space:nowrap}
+.shopping{padding:4px 18px 12px}
+.category{margin:15px 0 7px;color:var(--accent);font-size:12px;font-weight:800;letter-spacing:.06em}
+.item{display:flex;align-items:center;gap:11px;padding:12px 2px;border-bottom:1px solid #f0eee7;cursor:pointer}
+.item:last-child{border-bottom:0}
+.item input{width:19px;height:19px;accent-color:var(--accent);flex-shrink:0}
+.item-main{flex:1;min-width:0}
+.item-name{display:block;font-size:14px;font-weight:650}
+.item-detail{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.item.checked .item-name{text-decoration:line-through;color:#9b9c94}
+.item.checked .item-detail{opacity:.65}
+.actions{display:flex;gap:8px;margin-top:12px}
+.action{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:9px 12px;border-radius:10px;font-size:12px;cursor:pointer}
+.action.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.footnote{font-size:12px;color:var(--muted);padding:12px 2px 0}
+@media(min-width:600px){.wrap{padding-top:34px}.meal{padding:18px 22px}.day-title{padding-left:22px}}
+@media(max-width:380px){.wrap{padding-inline:11px}.day-tabs{padding:10px 8px;gap:4px}.day-tab{font-size:12px}.stat{padding:10px}.stat strong{font-size:14px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header>
+  <div class="eyebrow">Weekly meal planner</div>
+  <h1>스카이의 다이어트 플래너</h1>
+  <p class="subtitle">요리는 최소한으로, 익숙한 아침 메뉴는 그대로.</p>
+  <div class="stats">
+    <div class="stat"><small>현재 체중</small><strong>60 kg</strong></div>
+    <div class="stat"><small>하루 열량 목표</small><strong>약 1,400–1,500 kcal</strong></div>
+    <div class="stat"><small>식단 기준</small><strong>김치·브로콜리 제외</strong></div>
+  </div>
+</header>
+
+<section>
+  <div class="section-head"><h2>1. 일주일 식단표</h2><p>요일을 눌러 확인</p></div>
+  <div class="card">
+    <div class="day-tabs" role="tablist" aria-label="요일 선택" id="dayTabs"></div>
+    <div id="mealContent" aria-live="polite"></div>
+    <p class="note">밥 중량은 조리 후 기준입니다. 열량은 제품·조리법·실제 양에 따라 달라집니다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="section-head">
+    <div><h2>2. 장보기 체크리스트</h2><p style="margin-top:4px">구매한 항목을 체크하세요.</p></div>
+    <div class="progress-wrap"><div class="progress"><span id="progressBar"></span></div><span id="progressText">0/13</span></div>
+  </div>
+  <div class="card"><div class="shopping" id="shoppingList"></div></div>
+  <div class="actions">
+    <button class="action primary" id="copyList">미구매 목록 복사</button>
+    <button class="action" id="resetList">체크 초기화</button>
+  </div>
+  <p class="footnote">예상 장보기 비용은 약 4만~7만 원대이며, 판매처와 보유 식재료에 따라 달라집니다. 쌀·우유·견과류·콘플레이크가 집에 있다면 추가 구매 비용은 줄어듭니다.</p>
+</section>
+</main>
+<script>
+const plans = {
+"월요일":[["아침","제로 콘플레이크 40g + 우유 200ml + 삶은 달걀 2개","☀"],["점심 도시락","밥 150g + 닭가슴살 120g + 냉동 혼합 채소","▤"],["저녁","밥 150g + 두부 150g + 달걀 1개 + 김","☾"],["간식","사과 1개 + 무가당 두유 1팩","♡"]],
+"화요일":[["아침","그릭요거트 200g + 견과류 10g + 바나나 1개","☀"],["점심 도시락","밥 150g + 돼지 앞다리살 120g + 양배추볶음","▤"],["저녁","즉석밥 150g + 참치 1캔 + 달걀 1개","☾"],["간식","우유 200ml + 과일 1회분","♡"]],
+"수요일":[["아침","두부구이 200g + 바나나 1개","☀"],["점심 도시락","밥 150g + 닭가슴살 120g + 당근·양배추","▤"],["저녁","밥 150g + 달걀 2개 + 두부 100g + 김","☾"],["간식","그릭요거트 1개 + 과일","♡"]],
+"목요일":[["아침","제로 콘플레이크 40g + 우유 200ml + 달걀 1개","☀"],["점심 도시락","밥 150g + 참치 1캔 + 달걀 1개 + 오이","▤"],["저녁","밥 150g + 생선구이 150g + 양배추","☾"],["간식","바나나 1개 + 무가당 두유 1팩","♡"]],
+"금요일":[["아침","그릭요거트 200g + 견과류 10g + 바나나 1개","☀"],["점심 도시락","밥 150g + 돼지 앞다리살 120g + 냉동 채소","▤"],["저녁","닭강정 소량 + 밥 150g + 양배추 샐러드","☾"],["간식","우유 또는 두유 + 과일","♡"]],
+"토요일":[["아침","두부구이 150–200g + 달걀 1개","☀"],["점심","참치 계란 덮밥: 밥 150g + 참치 + 달걀","▤"],["저녁","밥 150g + 닭가슴살 120g + 냉동 채소","☾"],["간식","그릭요거트 + 과일","♡"]],
+"일요일":[["아침","제로 콘플레이크 40g + 우유 200ml + 달걀 2개","☀"],["점심","먹고 싶은 일반식 1인분","▤"],["저녁","밥 150g + 두부 150g + 달걀 1개 + 김","☾"],["간식","견과류 10g + 우유 또는 두유","♡"]]
+};
+const days = Object.keys(plans);
+const tabs = document.getElementById('dayTabs');
+const content = document.getElementById('mealContent');
+let selectedDay = '월요일';
+function renderDay(){
+  tabs.innerHTML = days.map((d,i)=>`<button class="day-tab" role="tab" aria-selected="${d===selectedDay}" aria-controls="mealContent" data-day="${d}" aria-label="${d}">${['월','화','수','목','금','토','일'][i]}</button>`).join('');
+  content.innerHTML = `<h3 class="day-title">${selectedDay} 식단</h3>` + plans[selectedDay].map(m=>`<article class="meal"><div class="meal-icon" aria-hidden="true">${m[2]}</div><div><h3>${m[0]}</h3><p>${m[1]}</p></div></article>`).join('');
+}
+tabs.addEventListener('click',e=>{const b=e.target.closest('button[data-day]');if(b){selectedDay=b.dataset.day;renderDay();}});
+const groceries = [
+{cat:'단백질',name:'달걀',qty:'15–20개',price:'4,000–7,000원'},
+{cat:'단백질',name:'두부',qty:'4–5모',price:'4,000–6,000원'},
+{cat:'단백질',name:'닭가슴살',qty:'4–5팩',price:'6,000–10,000원'},
+{cat:'단백질',name:'돼지 앞다리살',qty:'250–300g',price:'3,000–5,000원'},
+{cat:'단백질',name:'참치캔',qty:'2–3캔',price:'3,000–5,000원'},
+{cat:'단백질',name:'냉동 생선구이',qty:'1–2회분',price:'3,000–6,000원'},
+{cat:'채소·과일',name:'냉동 혼합 채소',qty:'1–2봉',price:'3,000–5,000원'},
+{cat:'채소·과일',name:'양배추',qty:'1/2통',price:'1,500–3,000원'},
+{cat:'채소·과일',name:'오이·당근',qty:'각 1–2개',price:'2,000–4,000원'},
+{cat:'채소·과일',name:'바나나',qty:'1송이',price:'3,000–4,000원'},
+{cat:'채소·과일',name:'사과 등 과일',qty:'소량',price:'3,000–5,000원'},
+{cat:'유제품·기타',name:'그릭요거트',qty:'3–4회분',price:'4,000–7,000원'},
+{cat:'유제품·기타',name:'무가당 두유',qty:'3–5팩',price:'2,000–4,000원'}
+];
+const list = document.getElementById('shoppingList');
+const storageKey = 'sky-diet-shopping-v1';
+let checked = new Set();
+try { checked = new Set(JSON.parse(localStorage.getItem(storageKey)||'[]')); } catch(e) {}
+function save(){try{localStorage.setItem(storageKey,JSON.stringify([...checked]));}catch(e){}}
+function renderList(){
+  let last='';
+  list.innerHTML='';
+  groceries.forEach((g,i)=>{
+    if(g.cat!==last){last=g.cat;const h=document.createElement('div');h.className='category';h.textContent=g.cat;list.appendChild(h);}
+    const label=document.createElement('label');label.className='item'+(checked.has(g.name)?' checked':'');
+    label.innerHTML=`<input type="checkbox" ${checked.has(g.name)?'checked':''} aria-label="${g.name} 구매 완료"><span class="item-main"><span class="item-name">${g.name}</span><span class="item-detail">${g.qty} · ${g.price}</span></span>`;
+    label.querySelector('input').addEventListener('change',e=>{if(e.target.checked)checked.add(g.name);else checked.delete(g.name);save();renderList();});
+    list.appendChild(label);
+  });
+  const count=checked.size;
+  document.getElementById('progressText').textContent=`${count}/${groceries.length}`;
+  document.getElementById('progressBar').style.width=`${count/groceries.length*100}%`;
+}
+document.getElementById('resetList').addEventListener('click',()=>{checked.clear();save();renderList();});
+document.getElementById('copyList').addEventListener('click',async()=>{
+  const remaining=groceries.filter(g=>!checked.has(g.name)).map(g=>`${g.name} — ${g.qty}`).join('\n')||'모든 항목을 구매했어요.';
+  try{await navigator.clipboard.writeText(remaining);alert('미구매 목록을 복사했어요.');}
+  catch(e){const ta=document.createElement('textarea');ta.value=remaining;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();alert('미구매 목록을 복사했어요.');}
+});
+renderDay();renderList();
+if ('serviceWorker' in navigator && location.protocol !== 'file:') { window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {})); }
+</script>
+</body>
+</html>
